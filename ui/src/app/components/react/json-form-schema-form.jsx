@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2018 The Thingsboard Authors
+ * Copyright © 2016-2019 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ class ThingsboardSchemaForm extends React.Component {
 
         this.onChange = this.onChange.bind(this);
         this.onColorClick = this.onColorClick.bind(this);
+        this.onToggleFullscreen = this.onToggleFullscreen.bind(this);
         this.hasConditions = false;
     }
 
@@ -78,7 +79,12 @@ class ThingsboardSchemaForm extends React.Component {
         this.props.onColorClick(event, key, val);
     }
 
-    builder(form, model, index, onChange, onColorClick, mapper) {
+    onToggleFullscreen() {
+        this.props.onToggleFullscreen();
+    }
+
+    
+    builder(form, model, index, onChange, onColorClick, onToggleFullscreen, mapper) {
         var type = form.type;
         let Field = this.mapper[type];
         if(!Field) {
@@ -91,22 +97,65 @@ class ThingsboardSchemaForm extends React.Component {
                 return null;
             }
         }
-        return <Field model={model} form={form} key={index} onChange={onChange} onColorClick={onColorClick} mapper={mapper} builder={this.builder}/>
+        return <Field model={model} form={form} key={index} onChange={onChange} onColorClick={onColorClick} onToggleFullscreen={onToggleFullscreen} mapper={mapper} builder={this.builder}/>
     }
 
-    render() {
-        let merged = utils.merge(this.props.schema, this.props.form, this.props.ignore, this.props.option);
+    createSchema(theForm) {
+        let merged = utils.merge(this.props.schema, theForm, this.props.ignore, this.props.option);
         let mapper = this.mapper;
         if(this.props.mapper) {
             mapper = _.merge(this.mapper, this.props.mapper);
         }
         let forms = merged.map(function(form, index) {
-            return this.builder(form, this.props.model, index, this.onChange, this.onColorClick, mapper);
+            return this.builder(form, this.props.model, index, this.onChange, this.onColorClick, this.onToggleFullscreen, mapper);
         }.bind(this));
 
+        let formClass = 'SchemaForm';
+        if (this.props.isFullscreen) {
+            formClass += ' SchemaFormFullscreen';
+        }
+
         return (
-            <div style={{width: '100%'}} className='SchemaForm'>{forms}</div>
+            <div style={{width: '100%'}} className={formClass}>{forms}</div>
         );
+    }
+
+    render() {
+        if(this.props.groupInfoes&&this.props.groupInfoes.length>0){
+            let content=[];
+            for(let info of this.props.groupInfoes){
+                let forms = this.createSchema(this.props.form[info.formIndex]);
+                let item = <ThingsboardSchemaGroup key={content.length} forms={forms} info={info}></ThingsboardSchemaGroup>;
+                content.push(item);
+            }
+            return (<div>{content}</div>);
+        }
+        else
+            return this.createSchema(this.props.form);
     }
 }
 export default ThingsboardSchemaForm;
+
+
+class ThingsboardSchemaGroup extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state={
+            showGroup:true
+        }
+    }
+
+    toogleGroup(index) {
+        this.setState({
+            showGroup:!this.state.showGroup
+        });
+    }
+
+    render() {
+        let theCla = "pull-right fa fa-chevron-down md-toggle-icon"+(this.state.showGroup?"":" tb-toggled")
+        return (<section className="md-whiteframe-z1" style={{marginTop: '10px'}}>
+                    <div className='SchemaGroupname md-button-toggle' onClick={this.toogleGroup.bind(this)}>{this.props.info.GroupTitle}<span className={theCla}></span></div>
+                    <div style={{padding: '20px'}} className={this.state.showGroup?"":"invisible"}>{this.props.forms}</div>
+                </section>);
+    }
+}

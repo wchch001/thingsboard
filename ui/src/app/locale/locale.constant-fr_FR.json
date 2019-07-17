@@ -336,7 +336,10 @@
             "action-cell-button": "Action cell button",
             "marker-click": "On marker click",
             "row-click": "On row click",
-            "tooltip-tag-action": "Tooltip tag action"
+            "polygon-click": "On polygon click",
+            "tooltip-tag-action": "Tooltip tag action",
+            "node-selected": "On node selected",
+            "element-click": "On HTML element click"
         }
     },
     "customer": {
@@ -1003,6 +1006,7 @@
     "language": {
         "language": "Language",
         "locales": {
+            "de_DE": "Allemand",
             "en_US": "Anglais",
             "fr_FR": "Français",
             "es_ES": "Espagnol",
@@ -1010,7 +1014,11 @@
             "ko_KR": "Coréen",
             "ru_RU": "Russe",
             "zh_CN": "Chinois",
-            "tr_TR": "Turc"
+            "ja_JA": "Japonaise",
+            "tr_TR": "Turc",
+            "fa_IR": "Persane",
+            "uk_UA": "Ukrainien",
+            "cs_CZ": "Tchèque"            
         }
     },
     "layout": {
@@ -1023,7 +1031,7 @@
         "settings": "Paramètres de mise en page"
     },
     "legend": {
-        "avg": "avg",
+        "avg": "moy",
         "max": "max",
         "min": "min",
         "position": "Position de la légende",
@@ -1400,6 +1408,7 @@
         "delete-action": "Supprimer l'action",
         "delete-action-text": "Etes-vous sûr de vouloir supprimer l'action du widget nommé '{{actionName}}'?",
         "delete-action-title": "Supprimer l'action du widget",
+        "display-timewindow": "Afficher fenêtre de temps",
         "display-legend": "Afficher la légende",
         "display-title": "Afficher le titre",
         "drop-shadow": "Ombre portée",
@@ -1431,6 +1440,65 @@
         "import": "Importer le type de widget",
         "invalid-widget-type-file-error": "Impossible d'importer le type de widget: structure de données de type widget invalide.",
         "widget-type-file": "Fichier de type Widget"
+    },
+    "widgets": {
+        "date-range-navigator": {
+            "localizationMap": {
+                "Sun": "Dim.",
+                "Mon": "Lun.",
+                "Tue": "Mar.",
+                "Wed": "Mer.",
+                "Thu": "Jeu.",
+                "Fri": "Ven.",
+                "Sat": "Sam.",
+                "Jan": "Janv.",
+                "Feb": "Févr.",
+                "Mar": "Mars",
+                "Apr": "Avr.",
+                "May": "Mai",
+                "Jun": "Juin",
+                "Jul": "Juil.",
+                "Aug": "Août",
+                "Sep": "Sept.",
+                "Oct": "Oct.",
+                "Nov": "Nov.",
+                "Dec": "Déc.",
+                "January": "Janvier",
+                "February": "Février",
+                "March": "Mars",
+                "April": "Avril",
+                "June": "Juin",
+                "July": "Juillet",
+                "August": "Août",
+                "September": "Septembre",
+                "October": "Octobre",
+                "November": "Novembre",
+                "December": "Décembre",
+                "Custom Date Range": "Plage de dates personnalisée",
+                "Date Range Template": "Modèle de plage de dates",
+                "Today": "Aujourd'hui",
+                "Yesterday": "Hier",
+                "This Week": "Cette semaine",
+                "Last Week": "La semaine dernière",
+                "This Month": "Ce mois-ci",
+                "Last Month": "Le mois dernier",
+                "Year": "Année",
+                "This Year": "Cette année",
+                "Last Year": "L'année dernière",
+                "Date picker": "Sélecteur de date",
+                "Hour": "Heure",
+                "Day": "Journée",
+                "Week": "La semaine",
+                "2 weeks": "2 Semaines",
+                "Month": "Mois",
+                "3 months": "3 Mois",
+                "6 months": "6 Mois",
+                "Custom interval": "Intervalle personnalisé",
+                "Interval": "Intervalle",
+                "Step size": "Taille de pas",
+                "Ok": "Ok"
+            }
+        }
     },
     "widgets-bundle": {
         "add": "Ajouter un groupe de widgets",

@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <!--
 
-    Copyright © 2016-2018 The Thingsboard Authors
+    Copyright © 2016-2019 The Thingsboard Authors
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -16,20 +15,4 @@
     limitations under the License.
 
 -->
-<!DOCTYPE configuration>
-<configuration scan="true" scanPeriod="10 seconds">
-
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="org.thingsboard.server" level="INFO" />
-    <logger name="akka" level="INFO" />
-
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-    </root>
-
-</configuration>
+<div class="tb-nav-tree-container"></div>

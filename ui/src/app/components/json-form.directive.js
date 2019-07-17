@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2018 The Thingsboard Authors
+ * Copyright © 2016-2019 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,10 @@ function JsonForm($compile, $templateCache, $mdColorPicker) {
             $compile(element.contents())(childScope);
         }
 
+        scope.isFullscreen = false;
+
         scope.formProps = {
+            isFullscreen: false,
             option: {
                 formDefaults: {
                     startEmpty: true
@@ -86,6 +89,10 @@ function JsonForm($compile, $templateCache, $mdColorPicker) {
             },
             onColorClick: function(event, key, val) {
                 scope.showColorPicker(event, val);
+            },
+            onToggleFullscreen: function() {
+                scope.isFullscreen = !scope.isFullscreen;
+                scope.formProps.isFullscreen = scope.isFullscreen;
             }
         };
 
@@ -116,6 +123,8 @@ function JsonForm($compile, $templateCache, $mdColorPicker) {
             });
         }
 
+        scope.onFullscreenChanged = function() {}
+
         scope.validate = function(){
             if (scope.schema && scope.model) {
                 var result = utils.validateBySchema(scope.schema, scope.model);
@@ -136,11 +145,13 @@ function JsonForm($compile, $templateCache, $mdColorPicker) {
                 };
             schema.strict = true;
             var form = scope.form ? angular.copy(scope.form) : [ "*" ];
+            var groupInfoes = scope.groupInfoes ? angular.copy(scope.groupInfoes) : [];
             var model = scope.model || {};
             scope.model = inspector.sanitize(schema, model).data;
             scope.formProps.option.formDefaults.readonly = readonly;
             scope.formProps.schema = schema;
             scope.formProps.form = form;
+            scope.formProps.groupInfoes = groupInfoes;
             scope.formProps.model = angular.copy(scope.model);
             if (!skipRerender) {
                 recompile();
@@ -167,6 +178,12 @@ function JsonForm($compile, $templateCache, $mdColorPicker) {
             }
         });
 
+        scope.$watch('groupInfoes',function(newValue, prevValue) {
+            if (newValue && newValue != prevValue) {
+                scope.updateValues();
+            }
+        });
+
         scope.validate();
 
         recompile();
@@ -180,6 +197,7 @@ function JsonForm($compile, $templateCache, $mdColorPicker) {
             form: '=',
             model: '=',
             formControl: '=',
+            groupInfoes: '=',
             readonly: '='
         },
         link: linker

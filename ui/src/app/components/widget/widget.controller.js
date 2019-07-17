@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2018 The Thingsboard Authors
+ * Copyright © 2016-2019 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,9 +76,9 @@ export default function WidgetController($scope, $state, $timeout, $window, $ele
         defaultSubscription: null,
         dashboardTimewindow: dashboardTimewindow,
         timewindowFunctions: {
-            onUpdateTimewindow: function(startTimeMs, endTimeMs) {
+            onUpdateTimewindow: function(startTimeMs, endTimeMs, interval) {
                 if (widgetContext.defaultSubscription) {
-                    widgetContext.defaultSubscription.onUpdateTimewindow(startTimeMs, endTimeMs);
+                    widgetContext.defaultSubscription.onUpdateTimewindow(startTimeMs, endTimeMs, interval);
                 }
             },
             onResetTimewindow: function() {
@@ -122,7 +122,8 @@ export default function WidgetController($scope, $state, $timeout, $window, $ele
         actionsApi: {
             actionDescriptorsBySourceId: actionDescriptorsBySourceId,
             getActionDescriptors: getActionDescriptors,
-            handleWidgetAction: handleWidgetAction
+            handleWidgetAction: handleWidgetAction,
+            elementClick: elementClick
         },
         stateController: stateController,
         aliasController: aliasController
@@ -138,7 +139,7 @@ export default function WidgetController($scope, $state, $timeout, $window, $ele
         headerAction.icon = descriptor.icon;
         headerAction.descriptor = descriptor;
         headerAction.onAction = function($event) {
-            var entityInfo = getFirstEntityInfo();
+            var entityInfo = getActiveEntityInfo();
             var entityId = entityInfo ? entityInfo.entityId : null;
             var entityName = entityInfo ? entityInfo.entityName : null;
             handleWidgetAction($event, this.descriptor, entityId, entityName);
@@ -287,6 +288,9 @@ export default function WidgetController($scope, $state, $timeout, $window, $ele
         options.useDashboardTimewindow = angular.isDefined(widget.config.useDashboardTimewindow)
             ? widget.config.useDashboardTimewindow : true;
 
+        options.displayTimewindow = angular.isDefined(widget.config.displayTimewindow)
+            ? widget.config.displayTimewindow : !options.useDashboardTimewindow;
+
         options.timeWindowConfig = options.useDashboardTimewindow ? vm.dashboardTimewindow : widget.config.timewindow;
         options.legendConfig = null;
 
@@ -425,6 +429,24 @@ export default function WidgetController($scope, $state, $timeout, $window, $ele
         return result;
     }
 
+    function elementClick(event) {
+        event.stopPropagation();
+        var e = event.target || event.srcElement;
+        if (e.id) {
+            var descriptors = getActionDescriptors('elementClick');
+            if (descriptors.length) {
+                for (var i = 0; i < descriptors.length; i++) {
+                    if (descriptors[i].name == e.id) {
+                        var entityInfo = getActiveEntityInfo();
+                        var entityId = entityInfo ? entityInfo.entityId : null;
+                        var entityName = entityInfo ? entityInfo.entityName : null;
+                        handleWidgetAction(event, descriptors[i], entityId, entityName);
+                    }
+                }
+            }
+        }
+    }
+
     function updateEntityParams(params, targetEntityParamName, targetEntityId, entityName) {
         if (targetEntityId) {
             var targetEntityParams;
@@ -502,13 +524,15 @@ export default function WidgetController($scope, $state, $timeout, $window, $ele
         }
     }
 
-    function getFirstEntityInfo() {
-        var entityInfo;
-        for (var id in widgetContext.subscriptions) {
-            var subscription = widgetContext.subscriptions[id];
-            entityInfo = subscription.getFirstEntityInfo();
-            if (entityInfo) {
-                break;
+    function getActiveEntityInfo() {
+        var entityInfo = widgetContext.activeEntityInfo;
+        if (!entityInfo) {
+            for (var id in widgetContext.subscriptions) {
+                var subscription = widgetContext.subscriptions[id];
+                entityInfo = subscription.getFirstEntityInfo();
+                if (entityInfo) {
+                    break;
+                }
             }
         }
         return entityInfo;
